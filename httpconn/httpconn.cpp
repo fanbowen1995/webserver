@@ -9,6 +9,7 @@ CHttpConnection::~CHttpConnection() {
 }
 
 bool CHttpConnection::read() {
+    printf("CHttpConnection::read.\n");
     if (m_read_idx >= READ_BUFFER_SIZE)
     {
         return false;

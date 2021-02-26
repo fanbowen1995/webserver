@@ -79,6 +79,7 @@ void CEpollServer::eventLoop() {
 }
 
 void CEpollServer::dealClientData() {
+    printf("CEpollServer::dealClientData.\n");
     struct sockaddr_in client_address;
     socklen_t client_addrlength = sizeof(client_address);
     while (1)
@@ -89,6 +90,7 @@ void CEpollServer::dealClientData() {
             printf("errno : accept error.\n");
             break;
         }
+        connections[connfd].connfd = connfd;
         // if (CHttpConnection::m_user_count >= MAX_FD)
         // {
         //     printf("Internal server busy.\n");
@@ -99,11 +101,12 @@ void CEpollServer::dealClientData() {
 }
 
 void CEpollServer::dealEpollIn(int fd) {
+    printf("CEpollServer::dealEpollIn.\n");
     // if (timer)
     // {
     //     adjust_timer(timer);
     // }
-    connections[fd].fd = fd;
+    //connections[fd].fd = fd;
     mHandler->addHttpConnection(connections + fd, 0);
 
     // while (true)
@@ -122,11 +125,12 @@ void CEpollServer::dealEpollIn(int fd) {
 }
 
 void CEpollServer::dealEpollOut(int fd) {
+    printf("CEpollServer::dealEpollOut.\n");
     // if (timer)
     // {
     //     adjust_timer(timer);
     // }
-    connections[fd].fd = fd;
+    //connections[fd].fd = fd;
     mHandler->addHttpConnection(connections + fd, 1);
 
     // while (true)
