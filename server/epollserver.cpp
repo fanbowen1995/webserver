@@ -88,7 +88,7 @@ void CEpollServer::dealClientAccept() {
     {
         printf("errno : accept error.\n");
     }
-    add_event(epollfd, connfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
+    add_event(epollfd, connfd, EPOLLIN);
     connections[connfd].fd = connfd;
     printf("dealClientAccept exit.\n");
 }
