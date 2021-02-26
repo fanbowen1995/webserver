@@ -90,6 +90,7 @@ void CEpollServer::dealClientAccept() {
     }
     add_event(epollfd, connfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
     connections[connfd].fd = connfd;
+    printf("dealClientAccept exit.\n");
 }
 
 void CEpollServer::dealEpollIn(int fd) {
