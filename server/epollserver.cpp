@@ -40,6 +40,7 @@ void CEpollServer::eventListen() {
 void CEpollServer::eventLoop() {
     while(true) {
         int number = epoll_wait(epollfd, events, m_max_event_num, -1);
+        printf("number = %d.\n", number);
         if(number < 0 && errno != EINTR) {
             printf("epoll failure!\n");
             break;
