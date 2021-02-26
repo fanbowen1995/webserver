@@ -82,23 +82,14 @@ void CEpollServer::dealClientAccept() {
     printf("CEpollServer::dealClientAccept.\n");
     struct sockaddr_in client_address;
     socklen_t client_addrlength = sizeof(client_address);
-    while (1)
+    int connfd = accept(socketfd, (struct sockaddr *)&client_address, &client_addrlength);
+    if (connfd < 0)
     {
-        int connfd = accept(socketfd, (struct sockaddr *)&client_address, &client_addrlength);
-        if (connfd < 0)
-        {
-            printf("errno : accept error.\n");
-            break;
-        }
-        add_event(epollfd, connfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
-        connections[connfd].fd = connfd;
-        // if (CHttpConnection::m_user_count >= MAX_FD)
-        // {
-        //     printf("Internal server busy.\n");
-        //     break;
-        // }
-        //timer(connfd, client_address);
+        printf("errno : accept error.\n");
+        break;
     }
+    add_event(epollfd, connfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
+    connections[connfd].fd = connfd;
 }
 
 void CEpollServer::dealEpollIn(int fd) {
