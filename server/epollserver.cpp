@@ -43,8 +43,8 @@ void CEpollServer::eventListen() {
     epollfd = epoll_create(5);
     assert(epollfd != -1);
 
-    //add_event(epollfd, socketfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
-    add_event(epollfd, socketfd, EPOLLOUT);
+    add_event(epollfd, socketfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
+    //add_event(epollfd, socketfd, EPOLLOUT);
 
     //http_conn::m_epollfd = m_epollfd;
 }
@@ -88,7 +88,7 @@ void CEpollServer::dealClientAccept() {
     {
         printf("errno : accept error.\n");
     }
-    add_event(epollfd, connfd, EPOLLIN);
+    add_event(epollfd, connfd, EPOLLOUT);
     connections[connfd].fd = connfd;
     printf("dealClientAccept exit.\n");
 }
