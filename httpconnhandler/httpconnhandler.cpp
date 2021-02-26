@@ -3,7 +3,7 @@
 CHttpConnHandler::CHttpConnHandler(int thread_number, 
     int max_request) : m_thread_number(thread_number), m_max_request(max_request) {
         m_threads = new pthread_t[m_thread_number];
-        assert(!m_threads);
+        assert(m_threads);
         for(int i = 0; i < m_thread_number; i++) {
             if(pthread_create(m_threads + i, nullptr, handle, this) != 0) {
                 delete[] m_threads;
