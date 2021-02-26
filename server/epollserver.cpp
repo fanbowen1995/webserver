@@ -11,6 +11,13 @@ CEpollServer::~CEpollServer() {
     delete[] events;
 }
 
+static void setnonblocking(int fd)
+{
+    int old_option = fcntl(fd, F_GETFL);
+    int new_option = old_option | O_NONBLOCK;
+    fcntl(fd, F_SETFL, new_option);
+}
+
 static void add_event(int epollfd, int fd, int state)
 {
     struct epoll_event ev;
@@ -89,6 +96,7 @@ void CEpollServer::dealClientAccept() {
         printf("errno : accept error.\n");
     }
     add_event(epollfd, connfd, EPOLLIN | EPOLLET);
+    setnonblocking(connfd);
     connections[connfd].fd = connfd;
     printf("dealClientAccept exit.\n");
 }
