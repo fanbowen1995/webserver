@@ -34,6 +34,10 @@ bool CHttpConnection::read() {
     return true;
 }
 
+bool CHttpConnection::write() {
+    return false;
+}
+
 void CHttpConnection::process() {
 
 }
