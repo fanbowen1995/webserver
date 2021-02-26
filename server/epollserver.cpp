@@ -49,8 +49,8 @@ void CEpollServer::eventListen() {
 }
 
 void CEpollServer::eventLoop() {
-    printf("CEpollServer::eventLoop.\n");
     while(true) {
+        printf("CEpollServer::eventLoop.\n");
         int number = epoll_wait(epollfd, events, m_max_event_num, -1);
         printf("number = %d.\n", number);
         if(number < 0 && errno != EINTR) {
