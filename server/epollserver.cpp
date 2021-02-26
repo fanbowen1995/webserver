@@ -43,7 +43,7 @@ void CEpollServer::eventListen() {
     epollfd = epoll_create(5);
     assert(epollfd != -1);
 
-    add_event(epollfd, socketfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
+    add_event(epollfd, socketfd, EPOLLIN | EPOLLET | EPOLLRDHUP);
     //add_event(epollfd, socketfd, EPOLLOUT);
 
     //http_conn::m_epollfd = m_epollfd;

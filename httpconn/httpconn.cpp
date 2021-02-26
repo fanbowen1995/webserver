@@ -8,6 +8,14 @@ CHttpConnection::~CHttpConnection() {
 
 }
 
+static void add_event(int epollfd, int fd, int state)
+{
+    struct epoll_event ev;
+    ev.events = state;
+    ev.data.fd = fd;
+    epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev);
+}
+
 bool CHttpConnection::read() {
     printf("CHttpConnection::read.\n");
     if (m_read_idx >= READ_BUFFER_SIZE)
