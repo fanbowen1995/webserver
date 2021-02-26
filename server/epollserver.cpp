@@ -90,7 +90,7 @@ void CEpollServer::dealClientData() {
             printf("errno : accept error.\n");
             break;
         }
-        connections[connfd].connfd = connfd;
+        connections[connfd].fd = connfd;
         // if (CHttpConnection::m_user_count >= MAX_FD)
         // {
         //     printf("Internal server busy.\n");
