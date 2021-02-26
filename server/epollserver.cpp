@@ -35,6 +35,16 @@ void CEpollServer::eventListen() {
     epollfd = epoll_create(5);
     assert(epollfd != -1);
 
+    epoll_event event;
+    event.data.fd = socketfd;
+
+    event.events = EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP;
+
+    // if (one_shot)
+    //     event.events |= EPOLLONESHOT;
+    epoll_ctl(epollfd, EPOLL_CTL_ADD, socketfd, &event);
+
+
     //http_conn::m_epollfd = m_epollfd;
 }
 
