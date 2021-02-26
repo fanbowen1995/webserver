@@ -16,6 +16,8 @@
 #include <cassert>
 #include <sys/epoll.h>
 
+const int MAX_FD = 65536;
+
 class CEpollServer : public CServer {
 public:
     CEpollServer(int port, int thread_num, int max_request, int max_event_num, const char* root);
