@@ -11,6 +11,14 @@ CEpollServer::~CEpollServer() {
     delete[] events;
 }
 
+static void add_event(int epollfd, int fd, int state)
+{
+    struct epoll_event ev;
+    ev.events = state;
+    ev.data.fd = fd;
+    epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev);
+}
+
 void CEpollServer::eventListen() {
     printf("CEpollServer::eventListen.\n");
     socketfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -35,15 +43,7 @@ void CEpollServer::eventListen() {
     epollfd = epoll_create(5);
     assert(epollfd != -1);
 
-    epoll_event event;
-    event.data.fd = socketfd;
-
-    event.events = EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP;
-
-    // if (one_shot)
-    //     event.events |= EPOLLONESHOT;
-    epoll_ctl(epollfd, EPOLL_CTL_ADD, socketfd, &event);
-
+    add_event(epollfd, socketfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
 
     //http_conn::m_epollfd = m_epollfd;
 }
@@ -62,7 +62,7 @@ void CEpollServer::eventLoop() {
             int fd = events[i].data.fd;
 
             if(fd == socketfd) {
-                dealClientData();
+                dealClientAccept();
                 //bool flag = dealClientData();
                 //if(false == flag) continue;
             }
@@ -78,8 +78,8 @@ void CEpollServer::eventLoop() {
     }
 }
 
-void CEpollServer::dealClientData() {
-    printf("CEpollServer::dealClientData.\n");
+void CEpollServer::dealClientAccept() {
+    printf("CEpollServer::dealClientAccept.\n");
     struct sockaddr_in client_address;
     socklen_t client_addrlength = sizeof(client_address);
     while (1)
@@ -90,6 +90,7 @@ void CEpollServer::dealClientData() {
             printf("errno : accept error.\n");
             break;
         }
+        add_event(epollfd, connfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
         connections[connfd].fd = connfd;
         // if (CHttpConnection::m_user_count >= MAX_FD)
         // {

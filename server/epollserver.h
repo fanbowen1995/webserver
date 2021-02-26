@@ -25,7 +25,7 @@ public:
 private:
     virtual void eventListen();
     virtual void eventLoop();
-    virtual void dealClientData();
+    virtual void dealClientAccept();
     virtual void dealEpollIn(int fd);
     virtual void dealEpollOut(int fd);
 private:
