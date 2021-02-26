@@ -23,8 +23,6 @@ bool CHttpConnection::read() {
     {
         return false;
     }
-
-    return true;
     
     printf("socket read : %s.\n", m_read_buf);
     return true;
