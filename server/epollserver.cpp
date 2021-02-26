@@ -49,8 +49,9 @@ void CEpollServer::eventLoop() {
             int fd = events[i].data.fd;
 
             if(fd == socketfd) {
-                bool flag = dealClientData();
-                if(false == flag) continue;
+                dealClientData();
+                //bool flag = dealClientData();
+                //if(false == flag) continue;
             }
             else if (events[i].events & EPOLLIN)
             {
