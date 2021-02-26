@@ -43,7 +43,8 @@ void CEpollServer::eventListen() {
     epollfd = epoll_create(5);
     assert(epollfd != -1);
 
-    add_event(epollfd, socketfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
+    //add_event(epollfd, socketfd, EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP);
+    add_event(epollfd, socketfd, EPOLLIN);
 
     //http_conn::m_epollfd = m_epollfd;
 }
@@ -61,7 +62,7 @@ void CEpollServer::eventLoop() {
         for(int i = 0; i < number; i++) {
             int fd = events[i].data.fd;
 
-            if(fd == socketfd && (events[i].events & EPOLLIN)) {
+            if((fd == socketfd) && (events[i].events & EPOLLIN)) {
                 dealClientAccept();
                 //bool flag = dealClientData();
                 //if(false == flag) continue;
