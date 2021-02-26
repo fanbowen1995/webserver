@@ -16,21 +16,16 @@ bool CHttpConnection::read() {
     }
     int bytes_read = 0;
 
-    while (true)
+    bytes_read = recv(fd, m_read_buf + m_read_idx, READ_BUFFER_SIZE - m_read_idx, 0);
+    m_read_idx += bytes_read;
+
+    if (bytes_read <= 0)
     {
-        bytes_read = recv(fd, m_read_buf + m_read_idx, READ_BUFFER_SIZE - m_read_idx, 0);
-        if (bytes_read == -1)
-        {
-            if (errno == EAGAIN || errno == EWOULDBLOCK)
-                break;
-            return false;
-        }
-        else if (bytes_read == 0)
-        {
-            return false;
-        }
-        m_read_idx += bytes_read;
+        return false;
     }
+
+    return true;
+    
     printf("socket read : %s.\n", m_read_buf);
     return true;
 }
