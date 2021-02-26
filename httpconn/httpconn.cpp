@@ -36,6 +36,7 @@ bool CHttpConnection::read() {
 }
 
 bool CHttpConnection::write() {
+    printf("CHttpConnection::write.\n");
     return false;
 }
 
