@@ -1,14 +1,21 @@
-#include "epollserver.h"
+#include "server.h"
 
-CEpollServer::CEpollServer(int port, int thread_num, int max_request, int max_event_num, const char* root) : CServer(port, thread_num, max_request, root), m_max_event_num(max_event_num) {
+CServer::CServer(int port, int thread_num, int max_request, int max_event_num, const char* root) : 
+    m_port(port), m_thread_num(thread_num), m_max_request(max_request), m_root(root), m_max_event_num(max_event_num) {
+    mHandler = new CHttpConnHandler(m_thread_num, m_max_request);
     events = new epoll_event[m_max_event_num];
     connections = new CHttpConnection[MAX_FD];
 }
 
-CEpollServer::~CEpollServer() {
+CServer::~CServer() {
     close(epollfd);
     close(socketfd);
     delete[] events;
+}
+
+void CServer::run() {
+    eventListen();
+    eventLoop();
 }
 
 static void setnonblocking(int fd)
@@ -26,8 +33,8 @@ static void add_event(int epollfd, int fd, int state)
     epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev);
 }
 
-void CEpollServer::eventListen() {
-    printf("CEpollServer::eventListen.\n");
+void CServer::eventListen() {
+    printf("CServer::eventListen.\n");
     socketfd = socket(PF_INET, SOCK_STREAM, 0);
     assert(socketfd >= 0);
 
@@ -56,9 +63,9 @@ void CEpollServer::eventListen() {
     //http_conn::m_epollfd = m_epollfd;
 }
 
-void CEpollServer::eventLoop() {
+void CServer::eventLoop() {
     while(true) {
-        printf("CEpollServer::eventLoop.\n");
+        printf("CServer::eventLoop.\n");
         int number = epoll_wait(epollfd, events, m_max_event_num, -1);
         printf("number = %d.\n", number);
         if(number < 0 && errno != EINTR) {
@@ -71,8 +78,6 @@ void CEpollServer::eventLoop() {
             printf("fd = %d.\n", fd);
             if((fd == socketfd) && (events[i].events & EPOLLIN)) {
                 dealClientAccept();
-                //bool flag = dealClientData();
-                //if(false == flag) continue;
             }
             else if (events[i].events & EPOLLIN)
             {
@@ -86,8 +91,8 @@ void CEpollServer::eventLoop() {
     }
 }
 
-void CEpollServer::dealClientAccept() {
-    printf("CEpollServer::dealClientAccept.\n");
+void CServer::dealClientAccept() {
+    printf("CServer::dealClientAccept.\n");
     struct sockaddr_in client_address;
     socklen_t client_addrlength = sizeof(client_address);
     int connfd = accept(socketfd, (struct sockaddr *)&client_address, &client_addrlength);
@@ -95,56 +100,17 @@ void CEpollServer::dealClientAccept() {
     {
         printf("errno : accept error.\n");
     }
-    add_event(epollfd, connfd, EPOLLIN | EPOLLET);
     setnonblocking(connfd);
+    add_event(epollfd, connfd, EPOLLIN | EPOLLET);
     connections[connfd].fd = connfd;
-    printf("dealClientAccept exit.\n");
 }
 
-void CEpollServer::dealEpollIn(int fd) {
-    printf("CEpollServer::dealEpollIn.\n");
-    // if (timer)
-    // {
-    //     adjust_timer(timer);
-    // }
-    //connections[fd].fd = fd;
+void CServer::dealEpollIn(int fd) {
+    printf("CServer::dealEpollIn.\n");
     mHandler->addHttpConnection(connections + fd, 0);
-
-    // while (true)
-    // {
-    //     if (1 == connections[sockfd].improv)
-    //     {
-    //         if (1 == connections[sockfd].timer_flag)
-    //         {
-    //             deal_timer(timer, sockfd);
-    //             connections[sockfd].timer_flag = 0;
-    //         }
-    //         connections[sockfd].improv = 0;
-    //         break;
-    //     }
-    // }
 }
 
-void CEpollServer::dealEpollOut(int fd) {
-    printf("CEpollServer::dealEpollOut.\n");
-    // if (timer)
-    // {
-    //     adjust_timer(timer);
-    // }
-    //connections[fd].fd = fd;
+void CServer::dealEpollOut(int fd) {
+    printf("CServer::dealEpollOut.\n");
     mHandler->addHttpConnection(connections + fd, 1);
-
-    // while (true)
-    // {
-    //     if (1 == connections[sockfd].improv)
-    //     {
-    //         if (1 == connections[sockfd].timer_flag)
-    //         {
-    //             deal_timer(timer, sockfd);
-    //             connections[sockfd].timer_flag = 0;
-    //         }
-    //         connections[sockfd].improv = 0;
-    //         break;
-    //     }
-    // }
 }

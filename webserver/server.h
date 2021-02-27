@@ -1,8 +1,6 @@
 #ifndef EPOLLSERVER_H
 #define EPOLLSERVER_H
 
-#include "../config.h"
-#include "server.h"
 #include "../httpconn/httpconn.h"
 
 #include <sys/socket.h>
@@ -18,17 +16,24 @@
 
 const int MAX_FD = 65536;
 
-class CEpollServer : public CServer {
+class CServer {
 public:
-    CEpollServer(int port, int thread_num, int max_request, int max_event_num, const char* root);
-    virtual ~CEpollServer();
+    CServer(int port, int thread_num, int max_request, int max_event_num, const char* root);
+    ~CServer();
+    void run();
 private:
-    virtual void eventListen();
-    virtual void eventLoop();
-    virtual void dealClientAccept();
-    virtual void dealEpollIn(int fd);
-    virtual void dealEpollOut(int fd);
+    void eventListen();
+    void eventLoop();
+    void dealClientAccept();
+    void dealEpollIn(int fd);
+    void dealEpollOut(int fd);
 private:
+    int m_port;
+    const char* m_root;
+    int m_max_request;
+    int m_thread_num;
+    CHttpConnHandler* mHandler;
+    //epoll
     int socketfd;
     int epollfd;
     int m_max_event_num;

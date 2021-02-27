@@ -38,12 +38,7 @@ public:
     bool write();
 public:
     int m_state;
-    int timer_flag;
-    int improv;
     int fd;
-    //static int m_user_count;
-private:
-    void init();
 private:
     char m_read_buf[READ_BUFFER_SIZE];
     int m_read_idx;

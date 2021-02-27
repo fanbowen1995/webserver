@@ -1,6 +1,4 @@
-#include "config.h"
-#include "server/server.h"
-#include "server/epollserver.h"
+#include "webserver/server.h"
 
 const char* ROOT = "";
 
@@ -14,7 +12,7 @@ const int MAX_EVENT_NUM = 10000;
 
 int main(int argc, char const *argv[])
 {
-    CServer* server = new CEpollServer(PORT, THREAD_NUM, MAX_REQUEST, MAX_EVENT_NUM, ROOT);
+    CServer* server = new CServer(PORT, THREAD_NUM, MAX_REQUEST, MAX_EVENT_NUM, ROOT);
     server->run();
     return 0;
 }
