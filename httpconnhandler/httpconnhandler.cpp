@@ -65,22 +65,11 @@ void CHttpConnHandler::run() {
         if(!conn) continue;
         if(0 == conn->m_state) {
             if(conn->read()) {
-                conn->improv = 1;
                 conn->process();
-            }
-            else {
-                conn->improv = 1;
-                conn->timer_flag = 1;
             }
         }
         else {
-            if(conn->write()) {
-                conn->improv = 1;
-            }
-            else {
-                conn->improv = 1;
-                conn->timer_flag = 1;
-            }
+            conn->write();
         }
     }
 }

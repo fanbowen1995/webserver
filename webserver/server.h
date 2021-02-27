@@ -2,6 +2,7 @@
 #define EPOLLSERVER_H
 
 #include "../httpconn/httpconn.h"
+#include "../httpconnhandler/httpconnhandler.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
